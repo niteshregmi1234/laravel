@@ -41,7 +41,6 @@ class CategoryController extends \BaseController {
         }else{
             $categoryDb=Category::where("category","=",strtolower(Input::get("category")))->get();
             if($categoryDb=="[]"){
-                print ("i am here");
                 $category = new  Category();
                 $category->category=strtolower(Input::get("category"));
                 $category->save();

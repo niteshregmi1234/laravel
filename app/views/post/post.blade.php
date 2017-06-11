@@ -43,8 +43,8 @@
         {{Form::label("category","Category:")}}
 
         <select class="form-control" name="category">
-            @foreach(Session::get("category") as $cat)
-        <option  value="{{$cat->category}}">{{strtoupper($cat->category)}}</option>
+            @foreach(Session::get("category") as $category)
+        <option  value="{{$category->category}}">{{strtoupper($category->category)}}</option>
             @endforeach
         </select>
 
@@ -53,15 +53,14 @@
         {{Form::label("author","Author:")}}
         {{Form::text("author",null,array("class"=>"form-control"))}}
         {{Form::label("description","Description:")}}
-        {{Form::textarea("description",null,array("class"=>"form-control"))}}
+        {{Form::textarea("description",null,array("class"=>"form-control"))}}<br>
         @if($errors->any())
-            <h4 style="font-style: italic;font-size: medium">{{$errors->first()}}</h4>
+            <div class="alert alert-danger" role="alert">{{$errors->first()}}</div>
         @endif
         {{Form::submit("Create Post",array("class"=>"btn btn-success btn-lg btn-block","style"=>"margin-top:20px"))}}
         {{Form::close()}}
     </div>
 </div>
-
 {{ HTML::script('packages/jquery/jquery.min.js') }}
 {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
-@stop
+@stop   `

@@ -11,8 +11,10 @@ class PostController extends \BaseController {
 	{
 //        $category=Category::all();
 //        Session::put("category",$category);
-        return View::make("post.allPost");
 
+        $post=Post::paginate(2);
+//        Session::put("posts",$post);
+        return View::make("post.allPost",array("posts"=>$post));
 	}
 
 
@@ -26,7 +28,9 @@ class PostController extends \BaseController {
         //        $category=Category::all();
 //        Session::put("category",$category);
 
-
+        $category=Category::all();
+        Session::put("category",$category);
+        return View::make("post.post");
     }
 
 
@@ -49,15 +53,19 @@ class PostController extends \BaseController {
                 'category' => 'max:255',
                 'author' => 'required|max:255',
                 'slug' => 'required|alpha_dash|min:5|max:255'
-
-
             );
             $validator = Validator::make(Input::all(), $rules);
 
             if ($validator->fails()) {
-                return Redirect::to("post")->withErrors($validator);
+                return Redirect::to("post/create")->withErrors($validator);
             } else {
 
+
+                $posts=Post::where(strtolower("slug"),"=",strtolower(Input::get("slug")))->get();
+                    if($posts!="[]"){
+                        return Redirect::to("post/create")->withErrors("Slug Already Exists!!");
+
+                    }
                 $post = new Post();
                 $post->category = Input::get("category");
                 $post->description = Input::get("description");
@@ -65,7 +73,7 @@ class PostController extends \BaseController {
                 $post->author = Input::get("author");
                 $post->title = Input::get("title");
                 $post->save();
-                return Redirect::to("post")->withErrors("Post is Successfully Created !! ");
+                return Redirect::to("post");
             }
 
         }
@@ -80,9 +88,7 @@ class PostController extends \BaseController {
 	 */
 	public function show($id)
 	{
-        $category=Category::all();
-        Session::put("category",$category);
-        return View::make("post.post");
+
 	}
 
 

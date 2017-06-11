@@ -6,7 +6,8 @@
     <title>Nitesh Blog</title>
 
     {{ HTML::style('packages/bootstrap/css/bootstrap.min.css') }}
-    {{ HTML::script('packages/bootstrap/css/newCss.css') }}
+    {{ HTML::style('packages/bootstrap/css/newCss.css') }}
+
 
 </head>
 <body>

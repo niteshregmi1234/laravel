@@ -17,7 +17,7 @@
                     {{ Form::text('role',null,array("class"=>"form-control","placeholder"=>"role")) }}
                 </div>
                 @if($errors->any())
-                    <h4 style="font-style: italic;font-size: medium">{{$errors->first()}}</h4>
+                    <div class="alert alert-danger" role="alert">{{$errors->first()}}</div>
                 @endif
                 {{--@if($message->any())--}}
                     {{--{{Form::label($message->first())}}--}}
@@ -26,8 +26,8 @@
                     {{ Form::submit('Signup',array('class'=>'btn btn-default')) }}
                 </div><br><br><br><br>
                 {{Form::close()}}
-                <div class="align-center" >
-                    <h5 style="margin-top: 0px ; text-decoration: none;">Already have an account {{ HTML::link('login', 'login', true)}} </h5><br>
+                <div class="align-center" style="margin-top: 35px">
+                    <h5 >Already have an account {{ HTML::link('login', 'login',array("style"=>"text-decoration: none;"))}} </h5><br>
                 </div>
             </div>
         </div>

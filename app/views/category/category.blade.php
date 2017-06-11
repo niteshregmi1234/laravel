@@ -71,12 +71,12 @@
             {{Form::label("category","Category:")}}
             {{Form::text("category",null,array("class"=>"form-control"))}}<hr>
             @if($errors->any())
-                <h4 style="font-style: italic;font-size: medium">{{$errors->first()}}</h4>
+                <div class="alert alert-danger" role="alert">{{$errors->first()}}</div>
             @endif
             @if(Session::has("message"))
-                <h4 style="font-style: italic;font-size: medium">{{Session::get("message")}}</h4>
+                <div class="alert alert-danger" role="alert"> {{Session::get("message")}}</div>
             @endif
-            {{Form::submit("Create Post",array("class"=>"btn btn-success btn-lg btn-block"))}}
+            {{Form::submit("Create Category",array("class"=>"btn btn-success btn-lg btn-block"))}}
             {{Form::close()}}
         </div>
     </div>

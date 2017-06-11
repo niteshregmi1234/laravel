@@ -1,6 +1,5 @@
 @extends('layouts.main')
 @section('content')
-
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -32,35 +31,112 @@
         </div>
     </nav>
     <div class="container">
-        <h1>Bootstrap Table Examples <a href="https://github.com/wenzhixin/bootstrap-table-examples" class="btn btn-primary" role="button" target="_blank">Learn more &raquo;</a></h1>
-        <div id="toolbar">
-            <button id="remove" class="btn btn-danger" disabled>
-                <i class="glyphicon glyphicon-remove"></i> Delete
-            </button>
-        </div>
-        <table id="table"
-               data-toolbar="#toolbar"
-               data-search="true"
-               data-show-refresh="true"
-               data-show-toggle="true"
-               data-show-columns="true"
-               data-show-export="true"
-               data-detail-view="true"
-               data-detail-formatter="detailFormatter"
-               data-minimum-count-columns="2"
-               data-show-pagination-switch="true"
-               data-pagination="true"
-               data-id-field="id"
-               data-page-list="[10, 25, 50, 100, ALL]"
-               data-show-footer="false"
-               data-side-pagination="server"
-               data-url="/examples/bootstrap_table/data"
-               data-response-handler="responseHandler">
-        </table>
+
+        <div class="row">
+            @if($errors->any())
+            <div class="alert alert-success" role="alert">
+                    {{$errors->first()}}
+            </div>
+            @endif
+            <div class="panel panel-primary filterable">
+                <div class="panel-heading">
+                    <h3 class="panel-title">All Posts</h3>
+                    <div class="pull-right">
+                        <button class="btn btn-default btn-xs btn-filter"><span class="glyphicon glyphicon-filter"></span> Filter</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr class="filters">
+                        <th><input type="text" class="form-control" placeholder="SN" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="Title" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="Description" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="Category" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="Author" disabled></th>
+                        <th><input type="text" class="form-control" placeholder="Slug" disabled></th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                     $i=0
+                    ?>
+                    @foreach($posts as $post)
+                    <tr>
+                        <td>{{HTML::link("post/$post->id/edit",$i=$i+1,array("class"=>"btn btn-primary","id"=>$post->id))}}
+
+                        </td>
+                        <td>{{$post->title}}</td>
+                        <td>{{$post->description}}</td>
+                        <td>{{$post->category}}</td>
+                        <td>{{$post->author}}</td>
+                        <td><a href="{{url($post->slug)}}")>{{url($post->slug)}}</a></td>
+                        <td>{{$post->created_at}}</td>
+                        <td>{{$post->updated_at}}</td>
+                        <td><span class="glyphicon glyphicon-remove" aria-hidden="true"  style="font-size:20px;color:red;"></span></td>
+                    </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+                {{Form::submit("Create New Post",array("class"=>"btn btn-success","onclick"=>"div_show()"))}}
+
+                <div style="float: right">
+                    {{$posts->links()}}
+                </div>
+              </div>
     </div>
+
+    <div id="abc">
+    <!-- Popup Div Starts Here -->
+        <div id="popupContact">
+            <!-- Contact Us Form -->
+
+
+            {{Form::open(array("route"=>"post.store","style"=>" max-width:600px;min-width:400px;padding:10px 50px;border:2px solid gray;border-radius:10px;font-family:raleway;background-color:white"))}}
+            {{--<img id="close"  onclick ="div_hide()">--}}
+            <h2>{{Form::label("create","Create New Post")}}</h2>
+            <span  id="close" class="glyphicon glyphicon-remove-circle" aria-hidden="true" onclick ="div_hide()" style="font-size:20px;color:red;"></span>
+
+            {{Form::label("title","Title:")}}
+            {{Form::text("title",null,array("class"=>"form-control","id"=>"name"))}}
+            {{Form::label("category","Category:")}}
+
+            <select class="form-control" name="category">
+                @foreach(Session::get("category") as $category)
+                    <option  value="{{$category->category}}">{{strtoupper($category->category)}}</option>
+                @endforeach
+            </select>
+
+            {{Form::label("slug","Slug:")}}
+            {{Form::text("slug",null,array("class"=>"form-control"))}}
+            {{Form::label("author","Author:")}}
+            {{Form::text("author",null,array("class"=>"form-control"))}}
+            {{Form::label("description","Description:")}}
+            {{Form::textarea("description",null,array("class"=>"form-control"))}}<br>
+            {{--@if($errors->any())--}}
+                {{--<div class="alert alert-danger" role="alert">{{$errors->first()}}</div>--}}
+            {{--@endif--}}
+            {{Form::submit("Create Post",array("class"=>"btn btn-success btn-lg btn-block","style"=>"margin-top:20px","onclick"=>"check_empty()"))}}
+            {{Form::close()}}
+            {{--<form action="#"  method="post" name="form">--}}
+                {{--<img id="close" src="images/3.png" onclick ="div_hide()">--}}
+                {{--<h2>Contact Us</h2>--}}
+                {{--<hr>--}}
+                {{--<input id="name" name="name" placeholder="Name" type="text">--}}
+                {{--<input id="email" name="email" placeholder="Email" type="text">--}}
+                {{--<textarea id="msg" name="message" placeholder="Message"></textarea>--}}
+                {{--<a href="javascript:check_empty()" id="submit">Send</a>--}}
+            {{--</form>--}}
+        </div>
+        <!-- Popup Div Ends Here -->
+    </div>
+    <!-- Display Popup Button -->
     {{ HTML::script('packages/jquery/jquery.min.js') }}
     {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
     {{ HTML::script('packages/bootstrap/js/new.js') }}
-
-
+    {{ HTML::script('packages/bootstrap/js/ga.js') }}
+    {{ HTML::style('packages/bootstrap/css/bootstrap-table.css') }}
 @stop

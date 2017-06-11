@@ -46,17 +46,22 @@ class signupController extends \BaseController {
             return Redirect::to("signup")->withErrors($validator);
         } else {
             if ($role == "author" || $role == "" || $role == "admin") {
+
                 $user = new  Userin();
+                $users=Userin::Where(strtolower("username"),"=",strtolower(Input::get("username")) )->get();
+                if($users!="[]"){
+                    return Redirect::to("signup")->withErrors("Username Already Exists");
+                }
                 $user->username = $username;
                 $user->password = $password;
 //                $user->password = Crypt::encrypt("$password");
-                print($user->password);
                 if ($role == "author" || $role == "") {
                     $user->role = "author";
                 } else {
                     $user->role = "admin";
                 }
 //                dd($user);
+                print($user);
                 $user->save();
                 return Redirect::to("login")->withErrors("Your account has been created ! Please login");
             } else {
