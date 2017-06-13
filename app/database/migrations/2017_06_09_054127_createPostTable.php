@@ -16,7 +16,7 @@ class CreatePostTable extends Migration {
             $table->increments('id');
             $table->string('title');
             $table->string('description');
-            $table->string('category')->unique();
+            $table->string('category');
             $table->string('slug')->unique();
             $table->string('author');
             $table->timestamps();

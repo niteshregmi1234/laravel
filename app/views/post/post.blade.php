@@ -35,11 +35,20 @@
 <div class="row">
 
     <div class="col-md-8 col-md-offset-2">
-        <h1>Create New Post</h1>
+        <h1>Edit Post</h1>
         <hr>
-        {{Form::open(array("route"=>"post.store"))}}
+
+        @if($errors->any())
+            <div class="alert alert-danger" role="alert">
+                {{$errors->first()}}
+            </div>
+        @endif
+
+        @foreach($posts as $post)
+        {{Form::open(array("method"=>"PUT",'route' => [ 'post.update', $post->id],"class"=>"post_edit_form"))}}
+        {{Form::hidden("id",$post->id,array("class"=>"form-control"))}}
         {{Form::label("title","Title:")}}
-        {{Form::text("title",null,array("class"=>"form-control"))}}
+        {{Form::text("title",$post->title,array("class"=>"form-control"))}}
         {{Form::label("category","Category:")}}
 
         <select class="form-control" name="category">
@@ -47,20 +56,34 @@
         <option  value="{{$category->category}}">{{strtoupper($category->category)}}</option>
             @endforeach
         </select>
-
+            <div id="log"></div>
         {{Form::label("slug","Slug:")}}
-        {{Form::text("slug",null,array("class"=>"form-control"))}}
+        {{Form::text("slug",$post->slug,array("class"=>"form-control "))}}
+        {{Form::hidden("id",$post->id,array("class"=>"form-control post_id"))}}
         {{Form::label("author","Author:")}}
-        {{Form::text("author",null,array("class"=>"form-control"))}}
+        {{Form::text("author",$post->author,array("class"=>"form-control"))}}
         {{Form::label("description","Description:")}}
-        {{Form::textarea("description",null,array("class"=>"form-control"))}}<br>
-        @if($errors->any())
-            <div class="alert alert-danger" role="alert">{{$errors->first()}}</div>
-        @endif
-        {{Form::submit("Create Post",array("class"=>"btn btn-success btn-lg btn-block","style"=>"margin-top:20px"))}}
+        {{Form::textarea("description",$post->description,array("class"=>"form-control"))}}<br>
+            {{Form::hidden("created_at",$post->created_at,array("class"=>"form-control"))}}
+            {{Form::hidden("updated_at",$post->updated_at,array("class"=>"form-control"))}}
+        @endforeach
+        {{Form::submit("Update Post",array("class"=>"btn btn-success btn-lg btn-block post_update","style"=>"margin-top:20px","name"=>"newUpdatedDate","value"=>Carbon\Carbon::now()))}}
         {{Form::close()}}
     </div>
 </div>
+
+@section('scripts')
+    <script>
+
+        $(document).ready(function(){
+            //alert("hello");
+
+            post.checkslug();
+            post.checkupdate();
+        });
+    </script>
+@stop
 {{ HTML::script('packages/jquery/jquery.min.js') }}
 {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
+{{ HTML::script('packages/bootstrap/js/gas.js') }}
 @stop   `

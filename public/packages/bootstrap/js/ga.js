@@ -1,10 +1,15 @@
 function check_empty() {
-    if (document.getElementById('name').value == "" || document.getElementById('email').value == "" || document.getElementById('msg').value == "") {
-        alert("Fill All Fields !");
-    } else {
-        document.getElementById('form').submit();
-        alert("Form Submitted Successfully...");
-    }
+        if (document.getElementById('title').value == "" || document.getElementById('slug').value == "" || document.getElementById('author').value == "" || document.getElementById('description').value == "") {
+            alert("Fill All Fields !");
+        } else if(document.getElementById('description').value.length < 8 ){
+            alert("Description should be greater at least 8 characters !");
+        }
+
+        else{
+            document.getElementById('forms').submit();
+            alert("Form Submitted Successfully...");
+        }
+
 }
 //Function To Display Popup
 function div_show() {
