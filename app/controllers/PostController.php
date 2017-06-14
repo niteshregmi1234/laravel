@@ -2,6 +2,7 @@
 
 class PostController extends \BaseController {
 
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -72,7 +73,7 @@ class PostController extends \BaseController {
                 $post->author = Input::get("author");
                 $post->title = Input::get("title");
                 $post->save();
-                return Redirect::to("post");
+                return Redirect::to("post")->withErrors("Successfully Added !!");
     }
 
 
@@ -149,43 +150,53 @@ class PostController extends \BaseController {
 	public function update($id)
     {
 
-        //echo $id;
-
-
-        $d1=strtotime(Input::get("gmdate"));
-        //echo $d1;
-         $new_date = gmdate('Y-m-d H:i:s', $d1);
-//        echo $new_date;
-//        $posts=Post::where("id","=",$id)->get();
-//          print(Input::get("newUpdatedDate"));
-
         $rules = array(
             'title' => 'required|max:255',
             'description' => 'required|min:8|max:255',
-            'category' => 'max:255',
+            'category' => 'required|max:255',
             'author' => 'required|max:255',
             'slug' => 'required|min:5|max:255'
         );
-        $validator = Validator::make(Input::all(), $rules);
+        $validator= Validator::make(Input::all(),$rules);
         if ($validator->fails()) {
-            print("i am in validation");
-            return Redirect::to("post/$id/edit")->withErrors($validator);
+
+            return Redirect::to("post.edit")->withErrors($validator);
+
         } else {
             $postFromId = Post::where("id", "=", $id)->get();
             $posts = Post::where(strtolower("slug"), "=", strtolower(Input::get("slug")))->get();
-//                $json = json_encode("$postFromId");
-//                $json = json_decode("$json");
-//                echo $json;
+
             if ($posts != "[]") {
+
 
                 if ($posts[0]->slug == $postFromId[0]->slug) {
                     if (Input::get("description") == $postFromId[0]->description&&Input::get("author") == $postFromId[0]->author&&Input::get("title") == $postFromId[0]->title&&Input::get("category") == $postFromId[0]->category) {
+
                         return Redirect::to("post")->withErrors("No any changes are updated");
 
                     }else{
                         $all=Input::all();  //input is in #json_array format like  {   } but when taken from db it will be in main_array format which contain json array format inside it like [ { },{ },{ }, ........ ]
-//                        dd ($all["title"]);
-                        $this->saveUpdated($postFromId,$all,$new_date);
+//                        $post=new Post();
+//                        foreach ($postFromId as $post){
+                            $d2=strtotime($postFromId[0]->updated_at);
+                            $d1=Carbon\Carbon::now();
+                            $d1=strtotime($d1);
+                            if($d1-$d2>86400){
+                                print("i am if");
+                                return Redirect::to("post")->withErrors("You cannot update your post because it crosses 24 hours");
+                            }else{
+                                print("i am else");
+
+                                $postFromId[0]->title=$all["title"];
+                                $postFromId[0]->description=$all["description"];
+                                $postFromId[0]->slug=$all["slug"];
+                                $postFromId[0]->author=$all["author"];
+                                $postFromId[0]->category=$all["category"];
+                                $postFromId[0]->updated_at=$d1;
+                                $postFromId[0]->save();
+                                return Redirect::to("post")->withErrors("Successfully Updated");
+                        }
+
                     }
 
                 } else {
@@ -193,7 +204,28 @@ class PostController extends \BaseController {
                 }
 
             } else {
-                $this->saveUpdated($postFromId,Input::all(),$new_date);
+                $all=Input::all();  //input is in #json_array format like  {   } but when taken from db it will be in main_array format which contain json array format inside it like [ { },{ },{ }, ........ ]
+//                        $post=new Post();
+//                        foreach ($postFromId as $post){
+                $d2=strtotime($postFromId[0]->updated_at);
+                $d1=Carbon\Carbon::now();
+                $d1=strtotime($d1);
+                if($d1-$d2>86400){
+                    print("i am if");
+                    return Redirect::to("post")->withErrors("You cannot update your post because it crosses 24 hours");
+                }else{
+                    print("i am else");
+
+                    $postFromId[0]->title=$all["title"];
+                    $postFromId[0]->description=$all["description"];
+                    $postFromId[0]->slug=$all["slug"];
+                    $postFromId[0]->author=$all["author"];
+                    $postFromId[0]->category=$all["category"];
+                    $postFromId[0]->updated_at=$d1;
+                    $postFromId[0]->save();
+                    return Redirect::to("post")->withErrors("Successfully Updated");
+                }
+
             }
 
 
@@ -244,24 +276,7 @@ class PostController extends \BaseController {
 
     }
 
-    function saveUpdated($postFromId,$all,$new_date){
-        $post=new Post();
-	    foreach ($postFromId as $post){
-            $f = 'Y-m-d H:i:s';
-            $d1 = \DateTime::createFromFormat($new_date, $f);
-            $d2 = \DateTime::createFromFormat($post, $f);
-//            print($a->diff($b));
-            $diff = $d2->diff($d1);
-            $hours = $diff->h + ($diff->days * 24);
-	        $post->title=$all["title"];
-            $post->description=$all["description"];
-            $post->slug=$all["slug"];
-            $post->author=$all["author"];
-            $post->category=$all["category"];
-        }
-        $post->save();
-//	    print("$postFromId,$all->slug");
-
+    function saveUpdated($postFromId,$all){
 
     }
 }

@@ -38,6 +38,11 @@
                     {{$errors->first()}}
             </div>
             @endif
+                @if(Session::has("message"))
+                    <div class="alert alert-success" role="alert">
+                        {{Session::get("message")}}
+                    </div>
+                @endif
             <div class="panel panel-primary filterable">
                 <div class="panel-heading">
                     <h3 class="panel-title">All Posts</h3>
@@ -159,23 +164,27 @@
         <!-- Popup Div Ends Here -->
     </div>
     <!-- Display Popup Button -->
-    </body>
     <!-- function to check slug -->
-@section('scripts')
-    <script>
 
-        $(document).ready(function(){
-            //alert("hello");
-            post.checkslug();
-        });
-    </script>
-@stop
     <!-- function to check slug -->
     <!-- Display Popup Button -->
-    {{ HTML::script('packages/jquery/jquery.min.js') }}
+
     {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
     {{ HTML::script('packages/bootstrap/js/new.js') }}
     {{ HTML::script('packages/bootstrap/js/ga.js') }}
     {{ HTML::script('packages/bootstrap/js/gas.js') }}
     {{ HTML::style('packages/bootstrap/css/bootstrap-table.css') }}
+    {{ HTML::script('packages/jquery/jquery.min.js') }}
+
+
+@stop
+
+@section("scripts")
+    <script >
+
+        $(document).ready(function(){
+            //alert("hello");
+            posts.checkslug();
+        });
+    </script>
 @stop

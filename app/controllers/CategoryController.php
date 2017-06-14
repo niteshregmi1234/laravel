@@ -9,8 +9,8 @@ class CategoryController extends \BaseController {
 	 */
 	public function index()
 	{
-	    print(Carbon\Carbon::now());
-//        return View::make("category.category");
+//	    print(Carbon\Carbon::now());
+        return View::make("category.category");
 	}
 
 

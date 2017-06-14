@@ -1,4 +1,4 @@
-var post = function(){
+var posts = function(){
        return{
          checkslug:function () {
              $( ".slug_check" ).keyup(function() {
@@ -30,15 +30,16 @@ var post = function(){
          },
            checkupdate:function(){
              $(".post_update").click(function(e){
-                 e.preventDefault();
+                 // e.preventDefault();
                  var host_url = "http://localhost:8000/";
                 var gmtDate = new Date().toISOString();
+                // console.log(gmtDate)
                 //gmtDate = gmtDate.UTC();
                 var post_id = $(".post_id").val();
                  var request=  $.ajax({
                      url: host_url +"post" + "/" + post_id,
                      type: "PUT",
-                     data: {gmdate: gmtDate}
+                     data: {gmtDate: gmtDate}
                  });
                  request.done(function(msg) {
                         $("#log").html(msg);

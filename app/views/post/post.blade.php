@@ -1,6 +1,5 @@
 @extends('layouts.main')
 @section('content')
-
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -45,8 +44,7 @@
         @endif
 
         @foreach($posts as $post)
-        {{Form::open(array("method"=>"PUT",'route' => [ 'post.update', $post->id],"class"=>"post_edit_form"))}}
-        {{Form::hidden("id",$post->id,array("class"=>"form-control"))}}
+        {{Form::open(array("method"=>"PUT",'route' => [ 'post.update', $post->id]))}}
         {{Form::label("title","Title:")}}
         {{Form::text("title",$post->title,array("class"=>"form-control"))}}
         {{Form::label("category","Category:")}}
@@ -59,31 +57,25 @@
             <div id="log"></div>
         {{Form::label("slug","Slug:")}}
         {{Form::text("slug",$post->slug,array("class"=>"form-control "))}}
-        {{Form::hidden("id",$post->id,array("class"=>"form-control post_id"))}}
+        {{--{{Form::hidden("id",$post->id,array("class"=>"form-control post_id"))}}--}}
         {{Form::label("author","Author:")}}
         {{Form::text("author",$post->author,array("class"=>"form-control"))}}
         {{Form::label("description","Description:")}}
         {{Form::textarea("description",$post->description,array("class"=>"form-control"))}}<br>
-            {{Form::hidden("created_at",$post->created_at,array("class"=>"form-control"))}}
-            {{Form::hidden("updated_at",$post->updated_at,array("class"=>"form-control"))}}
-        @endforeach
-        {{Form::submit("Update Post",array("class"=>"btn btn-success btn-lg btn-block post_update","style"=>"margin-top:20px","name"=>"newUpdatedDate","value"=>Carbon\Carbon::now()))}}
+
+        {{Form::submit("Update Post",array("class"=>"btn btn-success btn-lg btn-block ","style"=>"margin-top:20px","name"=>"newUpdatedDate"))}}
         {{Form::close()}}
+        @endforeach
     </div>
 </div>
 
-@section('scripts')
-    <script>
-
-        $(document).ready(function(){
-            //alert("hello");
-
-            post.checkslug();
-            post.checkupdate();
-        });
-    </script>
-@stop
 {{ HTML::script('packages/jquery/jquery.min.js') }}
 {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
 {{ HTML::script('packages/bootstrap/js/gas.js') }}
-@stop   `
+{{--<script type="javascript">--}}
+    {{--$(document).ready(function(){--}}
+{{--//            alert("hello");--}}
+        {{--posts.checkupdate();--}}
+    {{--});--}}
+{{--</script>--}}
+@stop
