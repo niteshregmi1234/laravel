@@ -1,37 +1,6 @@
 @extends('layouts.main')
+@include("layouts.partial._nav")
 @section('content')
-
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                {{ HTML::link('home', 'Nitesh Blog',array("class"=>"navbar-brand"))}}
-            </div>
-            <ul class="nav navbar-nav">
-                <li class="{{Request::is("home") ? "active" : ""}}">{{ HTML::link('home', 'Home')}}</li>
-                <li class="{{Request::is("post") ? "active" : ""}}">{{ HTML::link('post', 'Post')}}</li>
-                <li class="{{Request::is("category") ? "active" : ""}}">{{ HTML::link('category', 'Category')}}</li>
-            </ul>
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Account <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
 
     <div class="container">
         <div class="row">
@@ -48,75 +17,82 @@
         </div>
         <div class="row">
             <div class="col-lg-4" >
-                <ul style="list-style-type: none;">
-                <li>
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-menu-right" type="button" data-toggle="dropdown">Categories</button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">HTML</a></li>
-                        <li><a href="#">CSS</a></li>
-                        <li><a href="#">JavaScript</a></li>
-                    </ul>
-                </div>
-                </li><hr>
-                <li>
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="width: 29%">Slug</button>
+
+                {{--<ul style="list-style-type: none;">--}}
+                {{--<li>--}}
+                    {{--{{Form::label("category","Category:")}}--}}
+                    {{--<select class="form-control" name="category">--}}
+                        {{--<option  value="">Display All Categories Post</option>--}}
+                        {{--@foreach($category as $cat)--}}
+                            {{--<option  value="{{$cat->category}}">{{strtoupper($cat->category)}}</option>--}}
+                        {{--@endforeach--}}
+                    {{--</select>--}}
+                {{--</li><hr>--}}
+                    {{--<li>--}}
+
+                    {{--<li>--}}
+                    <div class="col-md-6 dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width: 70%">Categories</button>
                         <ul class="dropdown-menu">
-                            <li><a href="#">HTML</a></li>
-                            <li><a href="#">CSS</a></li>
-                            <li><a href="#">JavaScript</a></li>
-                        </ul>
+                            @foreach($category as $cat)
+                            <li><a href="{{url("home/".Session::get("users")[0]->id."/".strtoupper($cat->category))}}">{{strtoupper($cat->category)}}</a></li>
+                                @endforeach
+                        {{--</ul>--}}
                     </div>
-                </li>
-                </ul>
+                    {{--</li>--}}
+
+{{--<li>--}}
+                    {{--<div class="col-md-6 dropdown">--}}
+                        {{--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width: 70%">Slug</button>--}}
+                        {{--<ul class="dropdown-menu">--}}
+                            {{--<li><a href="#">HTML</a></li>--}}
+                            {{--<li><a href="#">CSS</a></li>--}}
+                            {{--<li><a href="#">JavaScript</a></li>--}}
+                        {{--</ul>--}}
+                    {{--</div>--}}
+                    {{--</li>--}}
+                {{--</ul>--}}
             </div>
 
             <div class="col-lg-8">
                 {{--<div class="form-inline">--}}
                     {{--<input type="text" title="Description">--}}
                 {{--</div>--}}
+                @foreach($posts as $post)
                 <div class="blog-post">
-                    <h3>Title 1</h3>
-                    <p>A disorder of structure or function in a human, animal, or plant, especially one that produces specific symptoms or that affects a specific location and is not simply a direct result of physical injury."bacterial meningitis is quite a rare disease"synonyms:	illness, sickness, ill health; Morea particular quality or disposition regarded as adversely affecting a person or group of people.</p>
-                    <a href="#" class="btn btn-primary">Read More</a>
-                    <h6 style="font-style: italic">Category: Physics</h6>
-                    <h6 style="font-style: italic">Slug: Gravitation</h6>
-                    <h6 style="font-style: italic">Author: A</h6>
+
+                    <h3>{{$post->title}}</h3>
+                    <p>{{substr($post->description,0,300)}}{{strlen($post->description)>300?"...":""}}</p>
+                    <a href="{{url("blog/".$post->slug)}}" class="btn btn-primary">Read More</a>
+                    @if($post->author==Session::get("users")[0]->username)
+                    {{HTML::link("post/$post->id/edit?flag=y" ,"Edit",array("class"=>"btn btn-primary edit"))}}
+                    {{HTML::link("delete/$post->id?flag=y&postId=".$post->id,"Delete",array("class"=>"btn btn-primary delete"))}}
+                    @endif
+                    {{--<a href="javascript:checkDelete()" class="btn btn-primary" id="delete" >Delete</a>--}}
+                    {{Form::hidden("id",$post->id,array("class"=>"postId"))}}
+                    <h6 style="font-style: italic">Category: {{$post->category}}</h6>
+                    <h6 style="font-style: italic">Slug: <a href="{{url("blog/".$post->slug)}}">{{url($post->slug)}}</a></h6>
+                    <h6 style="font-style: italic">Author: {{$post->author}}</h6>
+                    @if(Session::get("postid")==$post->id)
+                    @if($errors->any())
+                        <div class="alert alert-success" role="alert">
+                            {{$errors->first()}}
+                        </div>
+                    @endif
+                        @endif
+
                 </div>
-                <hr>
-                <div class="blog-post">
-                    <h3>Title 2</h3>
-                    <p>A disorder of structure or function in a human, animal, or plant, especially one that produces specific symptoms or that affects a specific location and is not simply a direct result of physical injury."bacterial meningitis is quite a rare disease"synonyms:	illness, sickness, ill health; Morea particular quality or disposition regarded as adversely affecting a person or group of people.</p>
-                    <a href="#" class="btn btn-primary">Read More</a>
-                    <h6 style="font-style: italic">Category: Physics</h6>
-                    <h6 style="font-style: italic">Slug: Gravitation</h6>
-                    <h6 style="font-style: italic">Author: A</h6>
+                    <hr>
+                @endforeach
+                <div style="float: right">
+                    {{$posts->links()}}
                 </div>
-                <hr>
-                <div class="blog-post">
-                    <h3>Title 3</h3>
-                    <p>A disorder of structure or function in a human, animal, or plant, especially one that produces specific symptoms or that affects a specific location and is not simply a direct result of physical injury."bacterial meningitis is quite a rare disease"synonyms:	illness, sickness, ill health; Morea particular quality or disposition regarded as adversely affecting a person or group of people.</p>
-                    <a href="#" class="btn btn-primary">Read More</a>
-                    <h6 style="font-style: italic">Category: Physics</h6>
-                    <h6 style="font-style: italic">Slug: Gravitation</h6>
-                    <h6 style="font-style: italic">Author: A</h6>
-                </div>
-                <hr>
-                <div class="blog-post">
-                    <h3>Title 4</h3>
-                    <p>A disorder of structure or function in a human, animal, or plant, especially one that produces specific symptoms or that affects a specific location and is not simply a direct result of physical injury."bacterial meningitis is quite a rare disease"synonyms:	illness, sickness, ill health; Morea particular quality or disposition regarded as adversely affecting a person or group of people.</p>
-                    <a href="#" class="btn btn-primary">Read More</a>
-                    <h6 style="font-style: italic">Category: Physics</h6>
-                    <h6 style="font-style: italic">Slug: Gravitation</h6>
-                    <h6 style="font-style: italic">Author: A</h6>
-                </div>
-                <hr>
             </div>
         </div>
     </div>
     {{ HTML::script('packages/jquery/jquery.min.js') }}
     {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
+    {{ HTML::script('packages/bootstrap/js/check.js') }}
     {{--<script>--}}
         {{--$(document).ready(function(){--}}
             {{--$('[data-toggle="popover"]').popover();--}}

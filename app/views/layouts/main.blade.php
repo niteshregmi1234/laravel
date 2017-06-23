@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nitesh Blog</title>
 
+
     {{ HTML::style('packages/bootstrap/css/bootstrap.min.css') }}
     {{ HTML::style('packages/bootstrap/css/newCss.css') }}
 

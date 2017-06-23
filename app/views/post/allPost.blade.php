@@ -1,37 +1,13 @@
 @extends('layouts.main')
+@include("layouts.partial._nav")
 @section('content')
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                {{ HTML::link('home', 'Nitesh Blog',array("class"=>"navbar-brand"))}}
-            </div>
-            <ul class="nav navbar-nav">
-                <<li class="{{Request::is("home") ? "active" : ""}}">{{ HTML::link('home', 'Home')}}</li>
-                <li class="{{Request::is("post") ? "active" : ""}}">{{ HTML::link('post', 'Post')}}</li>
-                <li class="{{Request::is("category") ? "active" : ""}}">{{ HTML::link('category', 'Category')}}</li>
-            </ul>
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                </div>
-                <button type="submit" class="btn btn-default">Submit</button>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Account <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <div class="container">
 
+    <div class="container">
+        <div class="row" >
+            <div class="col-md-2 col-md-offset-10">
+            <a href="{{ route('download') }}" class="btn btn-primary btn-block">Download PDF</a>
+            </div>
+        </div>
         <div class="row">
             @if($errors->any())
             <div class="alert alert-success" role="alert">
@@ -43,6 +19,7 @@
                         {{Session::get("message")}}
                     </div>
                 @endif
+
             <div class="panel panel-primary filterable">
                 <div class="panel-heading">
                     <h3 class="panel-title">All Posts</h3>
@@ -65,21 +42,23 @@
                     </tr>
                     </thead>
                     <tbody>
+
                     <?php
                      $i=0;
                         ?>
 
                     @foreach($posts as $post)
+
                     <tr>
                         <td>{{HTML::link("post/$post->id/edit",$i=$i+1,array("class"=>"btn btn-primary"))}}
 
                         </td>
 
                         <td>{{$post->title}}</td>
-                        <td>{{$post->description}}</td>
+                        <td>{{substr($post->description,0,100)}}{{strlen($post->description)>100?"...":""}}</td>
                         <td>{{$post->category}}</td>
                         <td>{{$post->author}}</td>
-                        <td><a href="{{url($post->slug)}}")>{{url($post->slug)}}</a></td>
+                        <td><a href="{{url("blog/".$post->slug)}}")>{{url($post->slug)}}</a></td>
                         <td>{{$post->created_at}}</td>
                         <td>{{$post->updated_at}}</td>
 
@@ -87,17 +66,22 @@
                         {{--<span class="glyphicon glyphicon-remove" aria-hidden="true"  style="font-size:20px;color:red;"></span>--}}
                             {{--<span class="glyphicon glyphicon-remove" aria-hidden="true"  style="font-size:20px;color:red;"></span></td>--}}
                     </tr>
+
                     @endforeach
+                    </tbody>
                 </table>
             </div>
-                {{Form::submit("Create New Post",array("class"=>"btn btn-success","onclick"=>"div_show()"))}}
-
+                @if($posts!="[]"  )
                 <div style="float: right">
                     {{$posts->links()}}
                 </div>
+               @endif
+                {{Form::submit("Create New Post",array("class"=>"btn btn-success","onclick"=>"div_show()"))}}
+
+
               </div>
     </div>
-
+    {{--<a href="#">Download PDF</a>--}}
     {{--<div id="abc">--}}
 
         {{--<div id="popupContact">--}}
@@ -152,8 +136,8 @@
             <div id="log"></div>
                 {{Form::label("slug","Slug:")}}
                 {{Form::text("slug",null,array("class"=>"form-control slug_check","id"=>"slug"))}}
-                {{Form::label("author","Author:")}}
-                {{Form::text("author",null,array("class"=>"form-control author_check","id"=>"author"))}}
+                {{--{{Form::label("author","Author:")}}--}}
+                {{--{{Form::text("author",null,array("class"=>"form-control author_check","id"=>"author"))}}--}}
                 {{Form::label("description","Description:")}}
                 {{Form::textarea("description",null,array("class"=>"form-control description_check","id"=>"description"))}}<br>
                 {{--<button onclick="check_empty()">Create</button>--}}
@@ -168,13 +152,12 @@
 
     <!-- function to check slug -->
     <!-- Display Popup Button -->
-
+    {{ HTML::script('packages/jquery/jquery.min.js') }}
     {{ HTML::script('packages/bootstrap/js/bootstrap.min.js') }}
     {{ HTML::script('packages/bootstrap/js/new.js') }}
     {{ HTML::script('packages/bootstrap/js/ga.js') }}
     {{ HTML::script('packages/bootstrap/js/gas.js') }}
     {{ HTML::style('packages/bootstrap/css/bootstrap-table.css') }}
-    {{ HTML::script('packages/jquery/jquery.min.js') }}
 
 
 @stop

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-class UserHomeController extends \BaseController {
+class LogoutController extends \BaseController {
 
 	/**
 	 * Display a listing of the resource.
@@ -12,7 +12,16 @@ class UserHomeController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make("home.index");
+
+
+//        Session::forget('users');
+
+        Auth::logout();
+        Session::flush();
+        Session::flash("message","Successfully Logged out");
+        return Redirect::route("login.index");
+
+//        return Redirect::to("login");
 	}
 
 
@@ -23,7 +32,7 @@ class UserHomeController extends \BaseController {
 	 */
 	public function create()
 	{
-
+		//
 	}
 
 
@@ -34,8 +43,8 @@ class UserHomeController extends \BaseController {
 	 */
 	public function store()
 	{
-
-    }
+		//
+	}
 
 
 	/**
@@ -46,15 +55,7 @@ class UserHomeController extends \BaseController {
 	 */
 	public function show($id)
 	{
-        $users=User::where("id","=",$id)->get();
-//        print($users);
-        Session::put("users",$users);
-//        Session::put("userssss", "[".json_decode(Auth::user())."]");
-//        print (Session::get("userssss"));
-//        exit();
-        $category=Category::all();
-        $post=Post::orderBy("id","desc")->paginate(4);
-        return View::make("home.index",array("category"=>$category,"posts"=>$post));
+		//
 	}
 
 
@@ -93,11 +94,5 @@ class UserHomeController extends \BaseController {
 		//
 	}
 
-    public function getCategory($id,$category)
-    {
 
-        $post=Post::where("category","=",$category)->orderBy("id","desc")->paginate(4);
-        $category=Category::all();
-        return View::make("home.index",array("category"=>$category,"posts"=>$post));
-    }
 }

@@ -1,5 +1,8 @@
 <?php
 
+
+
+
 class PostController extends \BaseController {
 
 
@@ -13,8 +16,10 @@ class PostController extends \BaseController {
        $category=Category::all();
         Session::put("category",$category);
 
-       $post=Post::paginate(4);
-
+       $post=Post::where("author","=",Session::get("users")[0]->username)->get();
+       if($post!="[]"){
+           $post=Post::where("author","=",Session::get("users")[0]->username)->paginate(4);
+       }
 //       print($post);
 
         //exit();
@@ -65,12 +70,12 @@ class PostController extends \BaseController {
 //            if ($validator->fails()) {
 ////                return Redirect::to("post")->withErrors($validator);
 //            } else {
-
+               $users=Session::get("users");
                 $post = new Post();
                 $post->category = Input::get("category");
                 $post->description = Input::get("description");
                 $post->slug = Input::get("slug");
-                $post->author = Input::get("author");
+                $post->author = $users[0]->username;
                 $post->title = Input::get("title");
                 $post->save();
                 return Redirect::to("post")->withErrors("Successfully Added !!");
@@ -100,8 +105,11 @@ class PostController extends \BaseController {
 
         $posts=Post::where("id","=",$id)->get();
         $category=Category::all();
-        Session::put("category",$category);
-        return View::make("post.post",array("posts"=>$posts));
+//        Session::put("category",$category);
+//        print(Input::get("flag"));
+//        exit();
+
+        return View::make("post.post",array("posts"=>$posts,"category"=>$category,"flag"=>Input::get("flag")));
 //            $username = Input::get("username");
 //            $password = Input::get("password");
 //            $role = Input::get("role");
@@ -152,15 +160,14 @@ class PostController extends \BaseController {
 
         $rules = array(
             'title' => 'required|max:255',
-            'description' => 'required|min:8|max:255',
+            'description' => 'required|min:8|max:5000',
             'category' => 'required|max:255',
-            'author' => 'required|max:255',
             'slug' => 'required|min:5|max:255'
         );
         $validator= Validator::make(Input::all(),$rules);
         if ($validator->fails()) {
 
-            return Redirect::to("post.edit")->withErrors($validator);
+            return Redirect::to("post/$id/edit")->withErrors($validator);
 
         } else {
             $postFromId = Post::where("id", "=", $id)->get();
@@ -170,7 +177,12 @@ class PostController extends \BaseController {
 
 
                 if ($posts[0]->slug == $postFromId[0]->slug) {
+
                     if (Input::get("description") == $postFromId[0]->description&&Input::get("author") == $postFromId[0]->author&&Input::get("title") == $postFromId[0]->title&&Input::get("category") == $postFromId[0]->category) {
+                        if(Input::get("flag")=="y"){
+                            return Redirect::to("home/".Session::get("users")[0]->id)->withErrors("No any changes are updated")
+                                                                                     ->withPostid(Input::get("postId"));
+                        }
 
                         return Redirect::to("post")->withErrors("No any changes are updated");
 
@@ -182,18 +194,24 @@ class PostController extends \BaseController {
                             $d1=Carbon\Carbon::now();
                             $d1=strtotime($d1);
                             if($d1-$d2>86400){
-                                print("i am if");
+                                if(Input::get("flag")=="y"){
+                                    return Redirect::to("home/".Session::get("users")[0]->id)->withErrors("You cannot update your post because it crosses 24 hours")
+                                        ->withPostid(Input::get("postId"));
+                                }
+
                                 return Redirect::to("post")->withErrors("You cannot update your post because it crosses 24 hours");
                             }else{
-                                print("i am else");
 
                                 $postFromId[0]->title=$all["title"];
                                 $postFromId[0]->description=$all["description"];
                                 $postFromId[0]->slug=$all["slug"];
-                                $postFromId[0]->author=$all["author"];
                                 $postFromId[0]->category=$all["category"];
                                 $postFromId[0]->updated_at=$d1;
                                 $postFromId[0]->save();
+                                if(Input::get("flag")=="y"){
+                                    return Redirect::to("home/".Session::get("users")[0]->id)->withErrors("Successfully Updated")
+                                        ->withPostid(Input::get("postId"));
+                                }
                                 return Redirect::to("post")->withErrors("Successfully Updated");
                         }
 
@@ -219,7 +237,6 @@ class PostController extends \BaseController {
                     $postFromId[0]->title=$all["title"];
                     $postFromId[0]->description=$all["description"];
                     $postFromId[0]->slug=$all["slug"];
-                    $postFromId[0]->author=$all["author"];
                     $postFromId[0]->category=$all["category"];
                     $postFromId[0]->updated_at=$d1;
                     $postFromId[0]->save();
@@ -243,6 +260,11 @@ class PostController extends \BaseController {
 	public function destroy($id)
 	{
 	    Post::where("id","=",$id)->delete();
+        if(Input::get("flag")=="y"){
+            return Redirect::to("home/".Session::get("users")[0]->id)->withErrors("Post Successfully Deleted")
+                ->withPostid(Input::get("postId"));
+        }
+
         return Redirect::to("post")->withErrors("Post Successfully Deleted");
 	}
 	public function check(){
@@ -276,7 +298,42 @@ class PostController extends \BaseController {
 
     }
 
-    function saveUpdated($postFromId,$all){
-
-    }
+    /**
+     * @return mixed
+     */
+    public function downloadPdf(){
+//        $dompdf = new Dompdf();
+//        $dompdf->loadHtml('<h1>Welcome to CodexWorld.com</h1>');
+//
+//// (Optional) Setup the paper size and orientation
+//        $dompdf->setPaper('A4', 'landscape');
+//
+//// Render the HTML as PDF
+//        $dompdf->render();
+//
+//// Output the generated PDF to Browser
+//        $dompdf->stream();
+$posts=Post::all();
+//View::share('posts',$posts);
+$pdf = PDF::loadView('post/downloadPdf',['posts'=>$posts])->setPaper('a4', 'landscape');
+return $pdf->download("downloadPdf.pdf");
 }
+
+public function getSearch()
+    {
+
+        $posts = Post::
+                 where('title', 'like', Input::get("title").'%')
+                 ->paginate(4);
+
+//print("$posts");
+        $category=Category::all();
+        return View::make("home.index",array("category"=>$category,"posts"=>$posts));
+
+}
+
+
+
+}
+
+

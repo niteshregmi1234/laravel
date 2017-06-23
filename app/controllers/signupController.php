@@ -47,13 +47,13 @@ class signupController extends \BaseController {
         } else {
             if ($role == "author" || $role == "" || $role == "admin") {
 
-                $user = new  Userin();
-                $users=Userin::Where(strtolower("username"),"=",strtolower(Input::get("username")) )->get();
+                $user = new  User();
+                $users=User::Where(strtolower("username"),"=",strtolower(Input::get("username")) )->get();
                 if($users!="[]"){
                     return Redirect::to("signup")->withErrors("Username Already Exists");
                 }
                 $user->username = $username;
-                $user->password = $password;
+                $user->password = Hash::make($password);
 //                $user->password = Crypt::encrypt("$password");
                 if ($role == "author" || $role == "") {
                     $user->role = "author";

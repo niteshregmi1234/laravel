@@ -1,5 +1,5 @@
 function check_empty() {
-        if (document.getElementById('title').value == "" || document.getElementById('slug').value == "" || document.getElementById('author').value == "" || document.getElementById('description').value == "") {
+        if (document.getElementById('title').value == "" || document.getElementById('slug').value == ""  || document.getElementById('description').value == "") {
             alert("Fill All Fields !");
         } else if(document.getElementById('description').value.length < 8 ){
             alert("Description should be greater at least 8 characters !");

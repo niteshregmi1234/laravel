@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row">
             <div class="form_bg" style="height: 320px">
-                {{ Form::open(array('route'=>'login.store')) }}
+                {{ Form::open(array('url'=>'logins')) }}
                     <h2 class="text-center">Login Page</h2>
                     <br/>
                     <div class="form-group">

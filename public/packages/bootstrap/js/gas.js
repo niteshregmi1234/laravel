@@ -45,7 +45,25 @@ var posts = function(){
                         $("#log").html(msg);
                  });
              });
-           }
+           },
+           checkDelete:function(){
+               $(".delete").click(function(){
+                   // e.preventDefault();
+                   var host_url = "http://localhost:8000/";
+                   // var gmtDate = new Date().toISOString();
+                   // console.log(gmtDate)
+                   //gmtDate = gmtDate.UTC();
+                   var post_id = $(".postId").val();
+                   var request=  $.ajax({
+                       url: host_url +"post" + "/" + postId+"/?page=y",
+                       method: "DELETE"
+                       // data: {gmtDate: gmtDate}
+                   });
+                   request.done(function(msg) {
+                       alert("Successfully Deleted");
+                   });
+               });
+    }
        };
 }();
 
