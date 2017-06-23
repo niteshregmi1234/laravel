@@ -54,6 +54,7 @@ class signupController extends \BaseController {
                 }
                 $user->username = $username;
                 $user->password = Hash::make($password);
+                $user->flag = "n";
 //                $user->password = Crypt::encrypt("$password");
                 if ($role == "author" || $role == "") {
                     $user->role = "author";
@@ -61,7 +62,7 @@ class signupController extends \BaseController {
                     $user->role = "admin";
                 }
 //                dd($user);
-                print($user);
+
                 $user->save();
                 return Redirect::to("login")->withErrors("Your account has been created ! Please login");
             } else {

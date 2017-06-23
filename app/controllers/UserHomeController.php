@@ -47,14 +47,18 @@ class UserHomeController extends \BaseController {
 	public function show($id)
 	{
         $users=User::where("id","=",$id)->get();
+        if($users[0]->flag=="y") {
 //        print($users);
-        Session::put("users",$users);
+            Session::put("users", $users);
 //        Session::put("userssss", "[".json_decode(Auth::user())."]");
 //        print (Session::get("userssss"));
 //        exit();
-        $category=Category::all();
-        $post=Post::orderBy("id","desc")->paginate(4);
-        return View::make("home.index",array("category"=>$category,"posts"=>$post));
+            $category = Category::all();
+            $post = Post::orderBy("id", "desc")->paginate(4);
+            return View::make("home.index", array("category" => $category, "posts" => $post));
+        }else{
+            return View::make("login.index")->WithErrors("Pended For Admin Approval");
+        }
 	}
 
 

@@ -17,6 +17,7 @@ class LoginsController extends Controller
     public function authenticate()
     {
 
+
         if (Auth::attempt(array('username' => Input::get("username"), 'password' => Input::get("password")),false))
         {
 

@@ -15,6 +15,8 @@
 
 Route::group(array('before' => 'auth'), function(){
     Route::get('blog/{slug}', array("as"=>"get.single","uses"=>'BlogSlugController@getSingle'));
+    Route::get('regis', array("as"=>"get.regis","uses"=>'RegistrationController@getRegistration'));
+    Route::get('regis/{id}', array("as"=>"get.approve","uses"=>'RegistrationController@getApprove'));
     Route::post('post/search', array("as"=>"get.search","uses"=>'PostController@getSearch'));
     Route::get('home/{id}/{category}', array("as"=>"get.category","uses"=>'UserHomeController@getCategory'));
     Route::resource('home', 'UserHomeController');

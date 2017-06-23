@@ -18,6 +18,7 @@ class CreateUserTable extends Migration {
             $table->string('password');
             $table->string('role');
             $table->string('remember_token',100);
+            $table->string('flag');
             $table->timestamps();
         });
 	}

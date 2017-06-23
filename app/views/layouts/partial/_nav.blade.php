@@ -8,6 +8,7 @@
                 <li class="{{Request::is("post") ? "active" : ""}}">{{ HTML::link('post', 'Post')}}</li>
                 @if(Session::get("users")[0]->role=="admin")
                 <li class="{{Request::is("category") ? "active" : ""}}">{{ HTML::link('category', 'Category')}}</li>
+                <li class="{{Request::is("regis") ? "active" : ""}}">{{ HTML::link('regis', 'Registration')}}</li>
                     @endif
             </ul>
             {{--<form class="navbar-form navbar-left" >--}}
